@@ -51,7 +51,7 @@ class SocialCard extends HTMLElement {
           color: white;
         }
       </style>
-      <div class="card">
+      <div class="card" id="${this.getAttribute("id")}">
         <img src="${this.getAttribute("photo") || "default.jpg"}" alt="Foto">
         <h3>${this.getAttribute("name")}</h3>
         <p>URL: <a href="${this.getAttribute("url")}" target="_blank">${this.getAttribute("url")}</a></p>
@@ -61,7 +61,7 @@ class SocialCard extends HTMLElement {
     `;
     this.shadowRoot.querySelector(".edit").addEventListener("click", () => {
       document.dispatchEvent(new CustomEvent("edit-social", { detail: { 
-        id: this.dataset.id, 
+        id: this.getAttribute("id"),
         name: this.getAttribute("name"), 
         url: this.getAttribute("url"), 
         photo: this.getAttribute("photo")

@@ -97,8 +97,14 @@ class ModalForm extends HTMLElement {
     const photoInput = this.shadowRoot.querySelector("#photo");
     const photo = photoInput.files[0] ? URL.createObjectURL(photoInput.files[0]) : "default.jpg";
     const socials = getFromLocalStorage("socials") || [];
-    const newSocial = { id: this.editingId, name, url, photo };
-    saveInLocalStorage("socials", [...socials, newSocial]);
+    const newSocial = { id: this.editingId || Date.now(), name, url, photo };
+    const existingIndex = socials.findIndex(social => social.id === newSocial.id);
+    if (existingIndex !== -1) {
+      socials[existingIndex] = newSocial;
+    } else {
+      socials.push(newSocial);
+    }
+    saveInLocalStorage("socials", socials);
     document.dispatchEvent(new CustomEvent("save-social", { detail: newSocial }));
     this.hide();
 
