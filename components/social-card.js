@@ -70,7 +70,6 @@ class SocialCard extends HTMLElement {
     this.shadowRoot.querySelector(".delete").addEventListener("click", () => {
       this.remove();
       deleteCard(this.dataset.id);
-      saveToLocalStorage();
     });
   }
 }

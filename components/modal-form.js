@@ -66,7 +66,6 @@ class ModalForm extends HTMLElement {
             <label>Nombre:</label>
             <input type="text" id="name">
           </div>
-           
           <label>URL: <input type="url" id="url"></label>
           <label>Foto: <input type="file" id="photo" accept="image/*"></label>
           <div class="buttons">
@@ -76,15 +75,7 @@ class ModalForm extends HTMLElement {
         </div>
       </div>
     `;
-    this.shadowRoot.querySelector("#save").addEventListener("click", () => {
-      const name = this.shadowRoot.querySelector("#name").value;
-      const url = this.shadowRoot.querySelector("#url").value;
-      const photoInput = this.shadowRoot.querySelector("#photo");
-      const photo = photoInput.files[0] ? URL.createObjectURL(photoInput.files[0]) : "default.jpg";
-      
-      document.dispatchEvent(new CustomEvent("save-social", { detail: { id: this.editingId, name, url, photo }}));
-      this.hide();
-    });
+    this.shadowRoot.querySelector("#save").addEventListener("click", () => this._save());
     this.shadowRoot.querySelector("#cancel").addEventListener("click", () => this.hide());
   }
 
@@ -98,6 +89,22 @@ class ModalForm extends HTMLElement {
 
   hide() {
     this.shadowRoot.querySelector(".modal-overlay").style.display = "none";
+  }
+
+  _save() {
+    const name = this.shadowRoot.querySelector("#name").value;
+    const url = this.shadowRoot.querySelector("#url").value;
+    const photoInput = this.shadowRoot.querySelector("#photo");
+    const photo = photoInput.files[0] ? URL.createObjectURL(photoInput.files[0]) : "default.jpg";
+    const socials = getFromLocalStorage("socials") || [];
+    const newSocial = { id: this.editingId, name, url, photo };
+    saveInLocalStorage("socials", [...socials, newSocial]);
+    document.dispatchEvent(new CustomEvent("save-social", { detail: newSocial }));
+    this.hide();
+
+    this.shadowRoot.querySelector("#name").value = "";
+    this.shadowRoot.querySelector("#url").value = "";
+    this.shadowRoot.querySelector("#photo").value = "";
   }
 }
 customElements.define("modal-form", ModalForm);

@@ -7,11 +7,17 @@
 </head>
 <body>
     <h1>Mis Redes Sociales</h1>
-    <button id="create">Crear Nueva Red Social</button>
+    <button id="create" onclick="modal.show()">Crear Nueva Red Social</button>
     <div id="list"></div>
     
     <script src="components/social-card.js"></script>
     <script src="components/modal-form.js"></script>
+    <script src="utils/index.js"></script>
     <script src="scripts/app.js"></script>
+
+    <script>
+        console.log('Hola Mundo');
+        console.log('modal', modal);
+    </script>
 </body>
 </html>
