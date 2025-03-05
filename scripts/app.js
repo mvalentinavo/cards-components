@@ -4,7 +4,11 @@ document.addEventListener("DOMContentLoaded", () => {
   document.body.appendChild(modal);
 
   const saveSocialHandler = (e) => {
-    let card = document.querySelector(`[data-id="${e.detail.id}"]`) || document.createElement("social-card");
+    let card = document.getElementById(e.detail.id);
+    if (!card) {
+      card = document.createElement("social-card");
+    }
+    card.setAttribute("id", e.detail.id);
     card.setAttribute("name", e.detail.name);
     card.setAttribute("url", e.detail.url);
     card.setAttribute("photo", e.detail.photo);
@@ -16,15 +20,18 @@ document.addEventListener("DOMContentLoaded", () => {
   };
 
   const loadSocialsFromLocalStorage = () => {
+    console.log("loadSocialsFromLocalStorage");
     const socials = getFromLocalStorage("socials") || [];
+    console.log(socials);
     socials.forEach((social) => {
+      console.log(social);
       document.dispatchEvent(new CustomEvent("save-social", { detail: social }));
     });
   };
 
-  loadSocialsFromLocalStorage();
-
+  
   document.addEventListener("save-social", saveSocialHandler);
   document.addEventListener("edit-social", editSocialHandler);
+  loadSocialsFromLocalStorage();
 });
 

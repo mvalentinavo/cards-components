@@ -80,7 +80,7 @@ class ModalForm extends HTMLElement {
   }
 
   show(data = {}) {
-    this.editingId = data.id || null;
+    this.editingId = data.id ? parseInt(data.id) : null;
     this.shadowRoot.querySelector("#name").value = data.name || "";
     this.shadowRoot.querySelector("#url").value = data.url || "";
     this.shadowRoot.querySelector("#photo").value = "";
@@ -91,12 +91,23 @@ class ModalForm extends HTMLElement {
     this.shadowRoot.querySelector(".modal-overlay").style.display = "none";
   }
 
-  _save() {
+  async _save() {
     const name = this.shadowRoot.querySelector("#name").value;
     const url = this.shadowRoot.querySelector("#url").value;
     const photoInput = this.shadowRoot.querySelector("#photo");
-    const photo = photoInput.files[0] ? URL.createObjectURL(photoInput.files[0]) : "default.jpg";
+    
     const socials = getFromLocalStorage("socials") || [];
+    
+    let photo = "assets/default.jpg";
+    if (photoInput.files[0]) {
+      photo = await fileToBase64(photoInput.files[0]);
+    } else if (this.editingId) {
+      const existingSocial = socials.find(social => social.id === this.editingId);
+      if (existingSocial && existingSocial.photo) {
+        photo = existingSocial.photo;
+      }
+    }
+    
     const newSocial = { id: this.editingId || Date.now(), name, url, photo };
     const existingIndex = socials.findIndex(social => social.id === newSocial.id);
     if (existingIndex !== -1) {

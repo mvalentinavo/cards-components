@@ -9,6 +9,11 @@ class SocialCard extends HTMLElement {
   }
 
   render() {
+    const id = this.getAttribute("id") || "";
+    const name = this.getAttribute("name") || "";
+    const url = this.getAttribute("url") || "";
+    const photo = this.getAttribute("photo") || "assets/default.jpg";
+    
     this.shadowRoot.innerHTML = `
       <style>
         .card {
@@ -20,12 +25,15 @@ class SocialCard extends HTMLElement {
           background: #fff;
           font-family: Arial, sans-serif;
           text-align: center;
+          min-width: 200px;
+          max-width: 300px;
         }
         .card img {
           width: 50px;
           height: 50px;
           border-radius: 50%;
           margin-bottom: 10px;
+          object-fit: cover;
         }
         .card h3 {
           margin: 0 0 10px;
@@ -51,14 +59,15 @@ class SocialCard extends HTMLElement {
           color: white;
         }
       </style>
-      <div class="card" id="${this.getAttribute("id")}">
-        <img src="${this.getAttribute("photo") || "default.jpg"}" alt="Foto">
-        <h3>${this.getAttribute("name")}</h3>
-        <p>URL: <a href="${this.getAttribute("url")}" target="_blank">${this.getAttribute("url")}</a></p>
+      <div class="card" id="${id}">
+        <img src="${photo}" alt="Foto">
+        <h3>${name}</h3>
+        <p>URL: <a href="${url}" target="_blank">${url}</a></p>
         <button class="edit">Editar</button>
         <button class="delete">Eliminar</button>
       </div>
     `;
+    
     this.shadowRoot.querySelector(".edit").addEventListener("click", () => {
       document.dispatchEvent(new CustomEvent("edit-social", { detail: { 
         id: this.getAttribute("id"),
@@ -67,9 +76,12 @@ class SocialCard extends HTMLElement {
         photo: this.getAttribute("photo")
       }}));
     });
+    
     this.shadowRoot.querySelector(".delete").addEventListener("click", () => {
+      const socials = getFromLocalStorage("socials") || [];
+      const updatedSocials = socials.filter(social => social.id !== parseInt(this.getAttribute("id")));
+      saveInLocalStorage("socials", updatedSocials);
       this.remove();
-      deleteCard(this.dataset.id);
     });
   }
 }
